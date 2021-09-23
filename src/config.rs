@@ -1,5 +1,4 @@
 use {
-    dirs,
     serde::{Deserialize, Serialize},
     std::{
         fs,
@@ -7,7 +6,6 @@ use {
         net::IpAddr,
         path::PathBuf,
     },
-    toml,
 };
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -40,7 +38,7 @@ impl Config {
 
     pub fn path() -> Result<PathBuf, io::Error> {
         let dir = dirs::config_dir()
-            .ok_or(io::Error::new(ErrorKind::NotFound, ""))?
+            .ok_or_else(|| io::Error::new(ErrorKind::NotFound, ""))?
             .join(env!("CARGO_PKG_NAME"));
         if !dir.exists() {
             fs::create_dir(&dir)?;

@@ -8,7 +8,10 @@ use {
 mod config;
 mod error;
 
-const PRE_COMMANDS: &[(&str, fn() -> Result<(), Error>)] = &[
+type PreCommand = (&'static str, fn() -> Result<(), Error>);
+type Command = (&'static str, fn(&Speaker, &Config) -> Result<(), Error>);
+
+const PRE_COMMANDS: &[PreCommand] = &[
     ("help", || {
         println!("Version: {}", env!("CARGO_PKG_VERSION"));
         println!("Usage: {} [command]", env!("CARGO_PKG_NAME"));
@@ -29,7 +32,7 @@ const PRE_COMMANDS: &[(&str, fn() -> Result<(), Error>)] = &[
     }),
 ];
 
-const COMMANDS: &[(&str, fn(&Speaker, &Config) -> Result<(), Error>)] = &[
+const COMMANDS: &[Command] = &[
     ("volume-up", |s, c| {
         let volume = s.volume()?;
         println!("Current volume: {}", volume);
